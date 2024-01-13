@@ -6,9 +6,9 @@ It's very rough, as can be expected of a game jam. My immediate next steps are t
 
 For now I want to take this on myself, but the work breakdown for the jam was roughly as follows:
 
-Game Logic, UI, Flow, AI: Joe Forster
-Level Generation: Brian Evans
-Custom Assets, HDRP Render Setup: Chris Turvey
+- Game Logic, UI, Flow, AI: Joe Forster
+- Level Generation: Brian Evans
+- Custom Assets, HDRP Render Setup: Chris Turvey
 
 # Game Guide
 
