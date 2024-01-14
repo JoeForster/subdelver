@@ -15,9 +15,7 @@ public class Collectible : MonoBehaviour
 		SubmarineControls player = hitObject.GetComponent<SubmarineControls>();
 		if (player != null)
 		{
-			GameFlow.Instance.Score += ScoreValue;
-			GameFlow.Instance.NumDecoys += DecoyValue;
-			GameFlow.Instance.Oxygen += OxygenValue;
+			GameFlow_MainGame.Instance.OnCollectItem(ScoreValue, DecoyValue, OxygenValue);
 			Destroy(gameObject);
 		}
 	}

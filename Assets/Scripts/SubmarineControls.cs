@@ -7,30 +7,39 @@ using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 using static UnityEngine.GraphicsBuffer;
 
+[RequireComponent(typeof(Rigidbody))]
 public class SubmarineControls : MonoBehaviour
 {
+	// Movement settings
 	public float thrustDeadZone = 0.1f;
 	public float mainThrustScale = 5.0f;
 	public float lateralThrustScale = 2.0f;
 	public float turnThrustScale = 2.0f;
-	public float MaxSpeed;
+	public float maxSpeed = 5.0f;
 
+	// Required components
 	public Rigidbody rigidBody;
 
+	// Optional visual components
 	public ParticleSystem trailParticles;
-	public GameObject decoyPrefab;
+
+	// Decoy shoot settings - the prefab will be instantiated on shoot.
+	public GameObject decoyPrefab; 
 	public Transform decoyShootForwardsPos;
 	public float decoyShootForwardsForce = 5.0f;
 	public Transform decoyShootBackwardsPos;
 	public float decoyShootBackwardsForce = 1.0f;
 
+	// Detectable component activated by use of engine thrust, and settings if used.
 	public Detectable engineSoundDetectable;
 	public float mainThrustNoiseScale = 1.0f;
 	public float lateralThrustNoiseScale = 0.5f;
 	public float turnThrustNoiseScale = 0.5f;
 
+	// Detectable component for the torch if used
 	public Detectable torchLightDetectable;
 
+	// Internal control state
 	private Vector3 _inputThrust;
 	private Vector3 _inputYawPitchRoll;
 	private Quaternion _thrustRotation;
@@ -47,7 +56,7 @@ public class SubmarineControls : MonoBehaviour
 		Debug.Assert(rigidBody != null);
 		if (rigidBody != null)
 		{
-			rigidBody.maxLinearVelocity = MaxSpeed;
+			rigidBody.maxLinearVelocity = maxSpeed;
 		}
 	}
 
@@ -64,6 +73,26 @@ public class SubmarineControls : MonoBehaviour
 		
 		Update_Particles();
 	}
+
+
+	// Fixed physics update for translating the controls to forces on our vehicle.
+	void FixedUpdate()
+	{
+		if (rigidBody != null)
+		{
+			rigidBody.AddForce(transform.rotation * _inputThrust);
+			rigidBody.AddTorque(transform.rotation * new Vector3(_inputYawPitchRoll.y, _inputYawPitchRoll.x, _inputYawPitchRoll.z));
+		}
+	}
+
+	void OnDrawGizmos()
+    {
+		Gizmos.color = Color.blue;
+        Gizmos.DrawLine(transform.position, transform.position + transform.rotation * _inputThrust);
+		Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, transform.position + transform.rotation * _inputYawPitchRoll);
+    }
+
 
 	void Update_Thrust(Gamepad gamepad)
 	{
@@ -157,29 +186,39 @@ public class SubmarineControls : MonoBehaviour
 
 	void Update_Shoot(Gamepad gamepad)
 	{
-		if (GameFlow.Instance.NumDecoys == 0)
+		if (GameFlow_MainGame.Instance.runState.NumDecoys == 0)
 		{
 			return;
 		}
 
 		if (decoyShootForwardsPos != null && gamepad.aButton.wasPressedThisFrame)
 		{
+			if (decoyPrefab != null)
+			{
+				Debug.LogWarning("Shooting with no valid decoyPrefab set");
+			}
+
 			Vector3 decoySpawnPos = decoyShootForwardsPos.position;
 			GameObject spawnedDecoy = Instantiate(decoyPrefab, decoySpawnPos, Quaternion.identity);
 			if (spawnedDecoy != null)
 			{
 				spawnedDecoy.GetComponent<Rigidbody>().AddForce(transform.forward * decoyShootForwardsForce);
-				GameFlow.Instance.NumDecoys--;
+				GameFlow_MainGame.Instance.OnConsumeDecoy();
 			}
 		}
 		else if (decoyShootBackwardsPos != null  && gamepad.bButton.wasPressedThisFrame)
 		{
+			if (decoyPrefab != null)
+			{
+				Debug.LogWarning("Shooting with no valid decoyPrefab set");
+			}
+
 			Vector3 decoySpawnPos = decoyShootBackwardsPos.position;
 			GameObject spawnedDecoy = Instantiate(decoyPrefab, decoySpawnPos, Quaternion.identity);
 			if (spawnedDecoy != null)
 			{
 				spawnedDecoy.GetComponent<Rigidbody>().AddForce(-transform.forward * decoyShootBackwardsForce);
-				GameFlow.Instance.NumDecoys--;
+				GameFlow_MainGame.Instance.OnConsumeDecoy();
 			}
 		}
 	}
@@ -197,22 +236,4 @@ public class SubmarineControls : MonoBehaviour
 			torchLightDetectable.SetEnabled(!isLightOn);
 		}
 	}
-
-	// Fixed physics update for translating the controls to forces on our vehicle.
-	void FixedUpdate()
-	{
-		if (rigidBody != null)
-		{
-			rigidBody.AddForce(transform.rotation * _inputThrust);
-			rigidBody.AddTorque(transform.rotation * new Vector3(_inputYawPitchRoll.y, _inputYawPitchRoll.x, _inputYawPitchRoll.z));
-		}
-	}
-
-	void OnDrawGizmos()
-    {
-		Gizmos.color = Color.blue;
-        Gizmos.DrawLine(transform.position, transform.position + transform.rotation * _inputThrust);
-		Gizmos.color = Color.red;
-        Gizmos.DrawLine(transform.position, transform.position + transform.rotation * _inputYawPitchRoll);
-    }
 }

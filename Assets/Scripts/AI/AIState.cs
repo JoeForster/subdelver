@@ -39,7 +39,7 @@ abstract class AIState
 		// This is inefficient and may not scale, but should be OK for now.
 		Patrol closestPatrol = null;
 		float closestDistSq = -1;
-		foreach (Patrol patrol in GameObject.FindObjectsOfType<Patrol>())
+		foreach (Patrol patrol in GameObject.FindObjectsByType<Patrol>(FindObjectsSortMode.None))
 		{
 			if (!patrol.HasMonster(monsterType))
 			{
@@ -70,7 +70,6 @@ abstract class AIState
 			// First patrol point - find closest.
 			if (knowledge._currentPatrolPointIndex < 0)
 			{
-				//Transform closestPoint;
 				int closestPointIndex = -1;
 				float closestPointDistSq = -1;
 				for (int i = 0; i < points.Length; i++)
@@ -111,6 +110,8 @@ abstract class AIState
 			arrived = false;
 
 			// Kinematic on-rails monster movement for now.
+			// TODO more natural movement along curved paths
+			// (on-rails to begin with, then proper thrust-based physics control for more natural chasing/manoeuvring)
 
 			// Move direct to destination
 			// TODO move in face direction

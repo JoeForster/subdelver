@@ -9,7 +9,7 @@ public class Orientor : MonoBehaviour
 
 	private void FixedUpdate()
 	{
-		if (transform != null)
+		if (transform != null && player != null)
 		{
 			transform.position = player.position + offset;
 		}
