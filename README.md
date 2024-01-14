@@ -2,9 +2,9 @@
 
 This is a little Unity game project we did for the Ubisoft Reflections and Leamington Winter Jam in January 2023.
 
-It's very rough with it being game jam code. My immediate next steps are to tidy up some of the code and start working on completing the integration of Brian's level generation into the world. Currently the playable part of the game is in the `DetectionTestGym` scene, so load into that if you want to test it in Unity editor.
+It's a bit rough with being a game jam. My immediate next steps are to tidy up some of the code (e.g. reduce singleton usage) and start working on completing the integration of Brian's level generation into the world. Currently the playable part of the game is in the `DetectionTestGym` scene, so load into that if you want to test it in Unity editor.
 
-Beyond that, the next step is to add more environmental hazards and enemy types with more interesting behaviours, and start playing around with more advanced stealth and survival gameplay mechanics.
+Beyond that, I'd like to add more environmental hazards and enemy types with more interesting behaviours, and start playing around with more advanced stealth and survival gameplay mechanics.
 
 For now I want to take this on myself, but the work breakdown for the jam was roughly as follows:
 
