@@ -16,7 +16,7 @@ For now I want to take this on myself, but the work breakdown for the jam was ro
 
 The objective is to collect these crates, but watch out for the creatures that are trying to lure you to your doom! Some may be attracted to light, so be careful with your torch.
 
-It can be tough to keep oriented, so check the arrow to the top right of your submarine to see which was is up.
+It can be tough to keep oriented, so check the arrow to the top right of your submarine to see which way is up.
 
 Playstation controls:
 - X fires a decoy
