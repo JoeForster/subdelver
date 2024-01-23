@@ -36,7 +36,7 @@ public class UI_Intro : MonoBehaviour
 			}
 	
 			var gamepad = Gamepad.current;
-			if (gamepad.startButton.wasPressedThisFrame)
+			if (gamepad != null && gamepad.startButton.wasPressedThisFrame)
 			{
 				GameFlow_Global.Instance.ResetToGameStart();
 			}
