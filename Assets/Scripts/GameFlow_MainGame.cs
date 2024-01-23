@@ -25,12 +25,14 @@ public class GameFlow_MainGame : MonoBehaviour
 	public Destructible player;
 
 	// Game config values
-	public float SurfaceY;
+	public float SurfaceY = 0;
+	public int InitialDecoys = 5;
+	public float InitialOxygen = 300;
+	public float OxygenDepleteRate = 1;
 	
 	// Per-run game state values, readable by UI
 	public struct RunState
 	{
-		// TODO: Make initial values configurable
 		public int CurDepth;
 		public int MaxDepth;
 		public int Score;
@@ -54,11 +56,13 @@ public class GameFlow_MainGame : MonoBehaviour
 			Destroy(gameObject);
 		}
 
+		Debug.Assert(player != null, "UNSET player reference on GameFlow_MainGame!");
+
 		runState.CurDepth = 0;
 		runState.MaxDepth = 0;
 		runState.Score = 0;
-		runState.NumDecoys = 5;
-		runState.Oxygen = 300;
+		runState.NumDecoys = InitialDecoys;
+		runState.Oxygen = InitialOxygen;
 	}
 
 	void Update()
@@ -119,7 +123,7 @@ public class GameFlow_MainGame : MonoBehaviour
 			GameFlow_Global.Instance.OnPlayerEscaped(runState);
 		}
 
-		runState.Oxygen -= Time.deltaTime;
+		runState.Oxygen -= Time.deltaTime * OxygenDepleteRate;
 	}
 
 	public void OnCollectItem(int ScoreValue, int DecoyValue, float OxygenValue)

@@ -21,6 +21,7 @@ public class GameFlow_Global : MonoBehaviour
 
 	public void ResetToGameStart()
 	{
+		// TODO need to fix this for other scenes!
 		SceneManager.LoadScene("DetectionTestGym");
 	}
 
