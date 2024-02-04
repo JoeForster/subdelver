@@ -33,10 +33,16 @@ class MonsterPatrolMoveState : AIState
 
 	public override void OnEnter()
 	{
-		if (!FindNextPatrolPoint())
+		if (FindNextPatrolPoint())
+		{
+			parent.SetNavDestination(knowledge._patrolDestination);
+			parent.SetMoveSpeed(moveSpeed_patrol);
+		}
+		else
 		{
 			Debug.LogWarning("Failed to find patrol point althouth a patrol was set - patrol will be broken!");
 		}
+
 	}
 	public override MonsterControllerState Update()
 	{
@@ -46,14 +52,17 @@ class MonsterPatrolMoveState : AIState
 		}
 		else if (knowledge._currentPatrolPointIndex >= 0)
 		{
-			bool arrived;
-			UpdateMoveToTarget(knowledge._patrolDestination, moveSpeed_patrol, arriveDist, out arrived);
+			bool arrived = parent.HasArrivedAtDestination();
 
 			if (arrived)
 			{
-				// This currently won't normally happen, but could if our patrol went away or if it's a one-way path I guess
-				if (!FindNextPatrolPoint())
+				if (FindNextPatrolPoint())
 				{
+					parent.SetNavDestination(knowledge._patrolDestination);
+				}
+				else
+				{
+					// This currently won't normally happen, but could if our patrol went away or if it's a one-way path I guess
 					Debug.LogWarning("Patrol unexpectedly ended - went to idle!");
 					return MonsterControllerState.Idle;
 				}
@@ -84,9 +93,9 @@ class MonsterChaseTargetState : AIState
 		else
 		{
 			// NOTE: This doesn't care about which is closest if we detect multiple at the same priority.
-			bool arrived;
 			Detectable detected = knowledge.GetBestDetectable();
-			UpdateMoveToTarget(detected.transform.position, moveSpeed_chase, arriveDist, out arrived);
+			parent.SetNavDestination(detected.transform.position);
+			parent.SetMoveSpeed(moveSpeed_chase);
 			knowledge._searchLastKnownPos = detected.transform.position;
 			knowledge._searchHasLastKnownPos = true;
 
@@ -118,15 +127,18 @@ class MonsterSearchTargetState : AIState
 		}
 		else
 		{
-			bool arrived;
-			UpdateMoveToTarget(knowledge._searchLastKnownPos, moveSpeed_chase, arriveDist, out arrived);
-			if (arrived)
+			parent.SetMoveSpeed(moveSpeed_chase);
+			if (parent.HasArrivedAtDestination())
 			{
 				knowledge._searchTimeLeftSecs -= Time.deltaTime;
 				if (knowledge._searchTimeLeftSecs <= 0.0f)
 				{
 					return MonsterControllerState.Idle;
 				}
+			}
+			else
+			{
+				parent.SetNavDestination(knowledge._searchLastKnownPos);
 			}
 
 			return MonsterControllerState.SearchTarget;

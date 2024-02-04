@@ -28,11 +28,10 @@ abstract class AIState
 	protected MonsterType monsterType { get { return parent.monsterType; } }
 	protected float moveSpeed_patrol { get { return parent.moveSpeed_patrol; } }
 	protected float moveSpeed_chase { get { return parent.moveSpeed_chase; } }
-	protected float arriveDist { get { return parent.arriveDist; } }
 	protected float searchTimeLimitSecs { get { return parent.searchTimeLimitSecs; } }
 
 
-	private MonsterController parent;
+	protected MonsterController parent;
 
 	public Patrol FindBestPatrol()
 	{
@@ -96,30 +95,4 @@ abstract class AIState
 		}
 	}
 
-	// TEMP LOCATION not best place for this!
-	protected void UpdateMoveToTarget(Vector3 target, float maxSpeed, float arriveDistance, out bool arrived)
-	{
-		Vector3 meToDest = target - transform.position;
-
-		if (meToDest.magnitude < arriveDistance)
-		{
-			arrived = true;
-		}
-		else
-		{
-			arrived = false;
-
-			// Kinematic on-rails monster movement for now.
-			// TODO more natural movement along curved paths
-			// (on-rails to begin with, then proper thrust-based physics control for more natural chasing/manoeuvring)
-
-			// Move direct to destination
-			// TODO move in face direction
-			transform.position += meToDest.normalized * maxSpeed * Time.deltaTime;
-			
-			// Gradually rotate towards destination
-			Quaternion desiredRot = Quaternion.LookRotation(meToDest);
-			transform.rotation = Quaternion.Slerp(transform.rotation, desiredRot, parent.turnRate * Time.deltaTime);
-		}
-	}
 };
